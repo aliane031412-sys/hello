@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finding the Area of a Circle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #3e8e41;
+        }
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .section:hover {
+            transform: scale(1.02);
+        }
+        .interactive {
+            background-color: #e7f4e4;
+            border-left: 5px solid #3e8e41;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Finding the Area of a Circle</h1>
+
+    <div class="section" id="content-standards">
+        <h2>Content Standards</h2>
+        <p>This lesson meets the following content standards...</p>
+    </div>
+
+    <div class="section" id="performance-standards">
+        <h2>Performance Standards</h2>
+        <p>Students will meet the performance standards by...</p>
+    </div>
+
+    <div class="section" id="learning-objectives">
+        <h2>Learning Objectives</h2>
+        <ul>
+            <li>Objective 1: Understand the formula for the area of a circle.</li>
+            <li>Objective 2: Apply the formula to solve problems.</li>
+            <li>Objective 3: Engage in interactive discovery activities.</li>
+        </ul>
+    </div>
+
+    <div class="section interactive" id="key-concepts">
+        <h2>Key Concepts</h2>
+        <p>The key concepts include the radius, diameter, and the importance of π (pi).</p>
+    </div>
+
+    <div class="section" id="lesson-flow">
+        <h2>Lesson Flow</h2>
+        <p>1. Introduction and discussion of the area of a circle...</p>
+        <p>2. Discovery Activity: Measure various circles...</p>
+        <p>3. Guided Practice: Solve area problems...</p>
+    </div>
+
+    <div class="section" id="examples">
+        <h2>Examples</h2>
+        <p>Example 1: Calculate the area of a circle with a radius of 5 units...</p>
+    </div>
+
+    <div class="section" id="guided-practice">
+        <h2>Guided Practice</h2>
+        <p>Use the interactive tool below to calculate the area:</p>
+        <input type="number" id="radius" placeholder="Enter radius">
+        <button onclick="calculateArea()">Calculate Area</button>
+        <p id="result"></p>
+        <script>
+            function calculateArea() {
+                var radius = document.getElementById('radius').value;
+                var area = Math.PI * Math.pow(radius, 2);
+                document.getElementById('result').innerText = 'Area: ' + area.toFixed(2);
+            }
+        </script>
+    </div>
+
+    <div class="section" id="assessment">
+        <h2>Assessment</h2>
+        <p>Students will be assessed through...</p>
+    </div>
+</body>
+</html>
