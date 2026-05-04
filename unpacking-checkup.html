@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unpacking Check Up - Interactive Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-true {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(132, 250, 176, 0.3);
+        }
+
+        .btn-true:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(132, 250, 176, 0.4);
+        }
+
+        .btn-false {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(250, 112, 154, 0.3);
+        }
+
+        .btn-false:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(250, 112, 154, 0.4);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .feedback.correct {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+        }
+
+        .feedback.incorrect {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+        }
+
+        .results-container.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .score-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+        }
+
+        .results-message {
+            font-size: 1.5em;
+            color: #333;
+            margin: 30px 0;
+            line-height: 1.6;
+        }
+
+        .results-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .result-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .result-item.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .result-item.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .result-item .emoji {
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+
+            .button-group {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Unpacking Check Up</h1>
+            <p class="subtitle">Test your knowledge about unpacking learning competencies</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div id="questionsContainer">
+            <!-- Questions will be generated here -->
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h2 style="color: #667eea; margin-bottom: 20px;">🎉 Quiz Complete!</h2>
+            <div class="score-circle">
+                <div class="score-text" id="scorePercentage">0%</div>
+                <div class="score-label">Score</div>
+            </div>
+            <div class="results-message" id="resultsMessage"></div>
+            <div class="results-details" id="resultDetails"></div>
+            <button class="btn-restart" onclick="location.reload()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "Unpacking learning competencies involves breaking down complex skills and knowledge into smaller, manageable components.",
+                correct: true
+            },
+            {
+                id: 2,
+                text: "When unpacking learning competencies, it is essential to identify the prerequisite knowledge and skills learners need to achieve a specific competency.",
+                correct: true
+            },
+            {
+                id: 3,
+                text: "Unpacking learning competencies is primarily a one-time process that does not require regular updates.",
+                correct: false
+            },
+            {
+                id: 4,
+                text: "Looking into the vertical alignment of the curriculum is needed in the unpacking of learning competencies.",
+                correct: true
+            },
+            {
+                id: 5,
+                text: "Unpacking considers the learning competencies from higher grade levels.",
+                correct: true
+            },
+            {
+                id: 6,
+                text: "Unpacking is done by levelling up beyond the identified learning competency.",
+                correct: false
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answers = [];
+
+        function initializeQuiz() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = `question-container ${index === 0 ? 'active' : ''}`;
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${q.id} of ${questions.length}</div>
+                    <div class="question-text">${q.text}</div>
+                    <div class="button-group">
+                        <button class="btn btn-true" onclick="answerQuestion(${index}, true)">
+                            <span class="emoji">👍</span>Correct
+                        </button>
+                        <button class="btn btn-false" onclick="answerQuestion(${index}, false)">
+                            <span class="emoji">👎</span>Incorrect
+                        </button>
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function answerQuestion(index, answered) {
+            const question = questions[index];
+            const isCorrect = answered === question.correct;
+            
+            if (isCorrect) {
+                score++;
+            }
+
+            answers[index] = {
+                question: question.text,
+                userAnswer: answered,
+                correctAnswer: question.correct,
+                isCorrect: isCorrect
+            };
+
+            showFeedback(index, isCorrect);
+
+            // Disable buttons
+            const buttons = document.querySelectorAll(`#question-${index} .btn`);
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Show next question after delay
+            setTimeout(() => {
+                if (index < questions.length - 1) {
+                    document.getElementById(`question-${index}`).classList.remove('active');
+                    document.getElementById(`question-${index + 1}`).classList.add('active');
+                    currentQuestion++;
+                } else {
+                    showResults();
+                }
+                updateProgress();
+            }, 2000);
+        }
+
+        function showFeedback(index, isCorrect) {
+            const feedbackDiv = document.getElementById(`feedback-${index}`);
+            const question = questions[index];
+            
+            feedbackDiv.classList.add('show');
+            feedbackDiv.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            let feedbackText = isCorrect 
+                ? `<span class="emoji">✅</span>Correct! This statement is ${question.correct ? 'TRUE' : 'FALSE'}.`
+                : `<span class="emoji">❌</span>Incorrect. This statement is ${question.correct ? 'TRUE' : 'FALSE'}.`; 
+            
+            feedbackDiv.innerHTML = feedbackText;
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showResults() {
+            document.getElementById('questionsContainer').style.display = 'none';
+            document.getElementById('resultsContainer').classList.add('active');
+
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+
+            let message = '';
+            if (percentage === 100) {
+                message = '🌟 Perfect Score! You are an expert in unpacking learning competencies!';
+            } else if (percentage >= 80) {
+                message = '🎯 Excellent! You have a strong understanding of unpacking learning competencies.';
+            } else if (percentage >= 60) {
+                message = '👏 Good! You have a solid grasp of the concepts. Keep learning!';
+            } else {
+                message = '💪 Keep practicing! Review the concepts and try again.';
+            }
+
+            document.getElementById('resultsMessage').textContent = message;
+
+            // Show detailed results
+            let detailsHTML = '<h3 style="margin-bottom: 15px; color: #333;">Detailed Answers:</h3>';
+            answers.forEach((answer, index) => {
+                const resultClass = answer.isCorrect ? 'correct' : 'incorrect';
+                const emoji = answer.isCorrect ? '✅' : '❌';
+                detailsHTML += `
+                    <div class="result-item ${resultClass}">
+                        <span class="emoji">${emoji}</span>
+                        <div>
+                            <strong>Question ${index + 1}:</strong> ${answer.question}
+                            <br>
+                            <small>Your answer: ${answer.userAnswer ? 'TRUE ✓' : 'FALSE ✗'} | Correct: ${answer.correctAnswer ? 'TRUE ✓' : 'FALSE ✗'}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('resultDetails').innerHTML = detailsHTML;
+        }
+
+        // Initialize quiz on load
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html>
