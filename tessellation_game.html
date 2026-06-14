@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tessellation Explorer Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-item span {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .game-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .shape-selector {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .shape-selector h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .shape-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .shape-btn {
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: #333;
+        }
+
+        .shape-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .shape-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .canvas-area {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            cursor: crosshair;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .feedback-area {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            min-height: 100px;
+        }
+
+        .feedback-area h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feedback-text {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+
+        .feedback-success {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .feedback-error {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        .feedback-info {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            color: #1565c0;
+        }
+
+        .instructions {
+            background: #fffde7;
+            border-left: 4px solid #fbc02d;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            color: #f57f17;
+        }
+
+        .tessellation-info {
+            background: #e0f2f1;
+            border-left: 4px solid #009688;
+            padding: 15px;
+            border-radius: 5px;
+            color: #00695c;
+            margin-bottom: 20px;
+        }
+
+        .tessellation-info strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .game-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .shape-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .shape-preview {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .shape-preview svg {
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Tessellation Explorer</h1>
+        <p class="subtitle">Can you figure out which shapes tessellate?</p>
+
+        <div class="instructions">
+            <strong>How to Play:</strong>
+            Select a shape, then decide if it can tessellate (fit together with no gaps or overlaps). 
+            Click "Yes" or "No" to make your guess!
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">Correct: <span id="correct">0</span></div>
+            <div class="score-item">Wrong: <span id="wrong">0</span></div>
+            <div class="score-item">Score: <span id="score">0%</span></div>
+        </div>
+
+        <div class="game-content">
+            <div class="shape-selector">
+                <h2>📐 Choose a Shape</h2>
+                <div class="shape-buttons" id="shapeButtons"></div>
+                <div class="shape-preview" id="shapePreview"></div>
+            </div>
+
+            <div class="canvas-area">
+                <h3>Preview Pattern</h3>
+                <canvas id="canvas" width="300" height="300"></canvas>
+                <button class="btn-primary" onclick="drawPattern()">Show Pattern</button>
+            </div>
+        </div>
+
+        <div class="tessellation-info" id="tessInfo">
+            <strong>What is Tessellation?</strong>
+            Tessellation is when shapes fit together perfectly with no gaps or overlaps to cover a surface.
+        </div>
+
+        <div class="button-group">
+            <button class="btn-success" onclick="makePrediction(true)">✓ Yes, it tessellates!</button>
+            <button class="btn-danger" onclick="makePrediction(false)">✗ No, it doesn't tessellate</button>
+        </div>
+
+        <div class="feedback-area" id="feedback">
+            <h3>Your Prediction:</h3>
+            <p class="feedback-text">Select a shape and click "Show Pattern" to see how it looks, then make your guess!</p>
+        </div>
+
+        <div class="button-group" style="margin-top: 30px;">
+            <button class="btn-secondary" onclick="resetGame()">🔄 Reset Game</button>
+            <button class="btn-secondary" onclick="nextShape()">➜ Next Shape</button>
+        </div>
+    </div>
+
+    <script>
+        const shapes = [
+            {
+                name: 'Equilateral Triangle',
+                tessellates: true,
+                description: 'All angles are 60°. Multiple triangles can fit around a point (360° ÷ 60° = 6).',
+                draw: drawTriangle
+            },
+            {
+                name: 'Square',
+                tessellates: true,
+                description: 'All angles are 90°. Four squares fit perfectly around a point (360° ÷ 90° = 4).',
+                draw: drawSquare
+            },
+            {
+                name: 'Regular Hexagon',
+                tessellates: true,
+                description: 'All angles are 120°. Three hexagons fit perfectly around a point (360° ÷ 120° = 3).',
+                draw: drawHexagon
+            },
+            {
+                name: 'Regular Pentagon',
+                tessellates: false,
+                description: 'All angles are 108°. These don\'t fit evenly around a point (360° ÷ 108° ≠ whole number).',
+                draw: drawPentagon
+            },
+            {
+                name: 'Regular Heptagon (7 sides)',
+                tessellates: false,
+                description: 'Interior angles ≈ 128.6°. These angles don\'t divide 360° evenly.',
+                draw: drawHeptagon
+            },
+            {
+                name: 'Circle',
+                tessellates: false,
+                description: 'Circles always leave gaps between them, so they cannot tessellate.',
+                draw: drawCircle
+            }
+        ];
+
+        let currentShapeIndex = -1;
+        let correct = 0;
+        let wrong = 0;
+        let totalAttempts = 0;
+
+        // Initialize shape buttons
+        function initShapeButtons() {
+            const container = document.getElementById('shapeButtons');
+            container.innerHTML = '';
+            shapes.forEach((shape, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'shape-btn';
+                btn.textContent = shape.name;
+                btn.onclick = () => selectShape(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectShape(index) {
+            currentShapeIndex = index;
+            document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelectorAll('.shape-btn')[index].classList.add('selected');
+            
+            // Clear canvas and feedback
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            
+            document.getElementById('feedback').innerHTML = `
+                <h3>📍 ${shapes[index].name}</h3>
+                <p class="feedback-text"><strong>Click "Show Pattern" to preview this shape tessellating!</strong></p>
+            `;
+
+            // Show preview shape
+            showShapePreview(index);
+        }
+
+        function showShapePreview(index) {
+            const preview = document.getElementById('shapePreview');
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.setAttribute('fill', '#667eea');
+            g.setAttribute('stroke', '#333');
+            g.setAttribute('stroke-width', '2');
+
+            // Draw shape based on index
+            if (index === 0) { // Triangle
+                g.innerHTML = '<polygon points="50,20 20,80 80,80"/>';
+            } else if (index === 1) { // Square
+                g.innerHTML = '<rect x="20" y="20" width="60" height="60"/>';
+            } else if (index === 2) { // Hexagon
+                g.innerHTML = '<polygon points="50,15 85,32.5 85,67.5 50,85 15,67.5 15,32.5"/>';
+            } else if (index === 3) { // Pentagon
+                g.innerHTML = '<polygon points="50,15 88,38 75,80 25,80 12,38"/>';
+            } else if (index === 4) { // Heptagon
+                g.innerHTML = '<polygon points="50,10 79,21 93,50 79,79 50,90 21,79 7,50 21,21"/>';
+            } else if (index === 5) { // Circle
+                g.innerHTML = '<circle cx="50" cy="50" r="35"/>';
+            }
+
+            svg.appendChild(g);
+            preview.innerHTML = '';
+            preview.appendChild(svg);
+        }
+
+        function drawPattern() {
+            if (currentShapeIndex === -1) {
+                document.getElementById('feedback').innerHTML = `
+                    <h3>⚠️ Select a shape first!</h3>
+                    <p class="feedback-text">Choose a shape from the left panel.</p>
+                `;
+                return;
+            }
+
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+            shapes[currentShapeIndex].draw(ctx);
+        }
+
+        function drawTriangle(ctx) {
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.7)';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            const size = 40;
+            const height = size * Math.sqrt(3) / 2;
+            
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const x = col * size + (row % 2) * size / 2;
+                    const y = row * height;
+                    
+                    if (y + height <= 300) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + size / 2, y);
+                        ctx.lineTo(x, y + height);
+                        ctx.lineTo(x + size, y + height);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function drawSquare(ctx) {
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.7)';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            const size = 50;
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    const x = col * size;
+                    const y = row * size;
+                    if (x + size <= 300 && y + size <= 300) {
+                        ctx.fillRect(x, y, size, size);
+                        ctx.strokeRect(x, y, size, size);
+                    }
+                }
+            }
+        }
+
+        function drawHexagon(ctx) {
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.7)';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            function drawHex(cx, cy, radius) {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i * 60 - 30) * Math.PI / 180;
+                    const x = cx + radius * Math.cos(angle);
+                    const y = cy + radius * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            
+            const radius = 30;
+            const spacing = radius * 1.5;
+            
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const x = col * spacing * 2 + (row % 2) * spacing;
+                    const y = row * spacing;
+                    if (x <= 300 && y <= 300) {
+                        drawHex(x, y, radius);
+                    }
+                }
+            }
+        }
+
+        function drawPentagon(ctx) {
+            ctx.fillStyle = 'rgba(244, 67, 54, 0.7)';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            function drawPent(cx, cy, radius) {
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i * 72 - 90) * Math.PI / 180;
+                    const x = cx + radius * Math.cos(angle);
+                    const y = cy + radius * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            
+            // Show gaps
+            drawPent(80, 80, 35);
+            drawPent(180, 80, 35);
+            drawPent(80, 180, 35);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.font = '12px Arial';
+            ctx.fillText('GAPS!', 130, 100);
+        }
+
+        function drawHeptagon(ctx) {
+            ctx.fillStyle = 'rgba(244, 67, 54, 0.7)';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            function drawHept(cx, cy, radius) {
+                ctx.beginPath();
+                for (let i = 0; i < 7; i++) {
+                    const angle = (i * 360/7 - 90) * Math.PI / 180;
+                    const x = cx + radius * Math.cos(angle);
+                    const y = cy + radius * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+            
+            drawHept(100, 100, 30);
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.font = '12px Arial';
+            ctx.fillText('Doesn\'t fit!', 50, 200);
+        }
+
+        function drawCircle(ctx) {
+            ctx.fillStyle = 'rgba(244, 67, 54, 0.7)';
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            
+            const radius = 30;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    const x = col * 100 + 50;
+                    const y = row * 100 + 50;
+                    if (x <= 300 && y <= 300) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.font = '12px Arial';
+            ctx.fillText('GAPS!', 130, 150);
+        }
+
+        function makePrediction(prediction) {
+            if (currentShapeIndex === -1) {
+                document.getElementById('feedback').innerHTML = `
+                    <h3>⚠️ Select a shape first!</h3>
+                    <p class="feedback-text">Choose a shape and click "Show Pattern" to see the preview.</p>
+                `;
+                return;
+            }
+
+            const shape = shapes[currentShapeIndex];
+            const isCorrect = prediction === shape.tessellates;
+            
+            totalAttempts++;
+            if (isCorrect) {
+                correct++;
+                document.getElementById('feedback').className = 'feedback-area feedback-success';
+                document.getElementById('feedback').innerHTML = `
+                    <h3>✓ Correct!</h3>
+                    <p class="feedback-text"><strong>${shape.name}</strong> ${shape.tessellates ? 'DOES' : 'DOES NOT'} tessellate.</p>
+                    <p class="feedback-text" style="margin-top: 10px;"><em>${shape.description}</em></p>
+                `;
+            } else {
+                wrong++;
+                document.getElementById('feedback').className = 'feedback-area feedback-error';
+                document.getElementById('feedback').innerHTML = `
+                    <h3>✗ Incorrect</h3>
+                    <p class="feedback-text"><strong>${shape.name}</strong> actually ${shape.tessellates ? 'DOES' : 'DOES NOT'} tessellate.</p>
+                    <p class="feedback-text" style="margin-top: 10px;"><em>${shape.description}</em></p>
+                `;
+            }
+
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('correct').textContent = correct;
+            document.getElementById('wrong').textContent = wrong;
+            
+            const percentage = totalAttempts > 0 ? Math.round((correct / totalAttempts) * 100) : 0;
+            document.getElementById('score').textContent = percentage + '%';
+        }
+
+        function nextShape() {
+            const available = Array.from({length: shapes.length}, (_, i) => i);
+            const randomIndex = available[Math.floor(Math.random() * available.length)];
+            selectShape(randomIndex);
+            document.getElementById('feedback').className = 'feedback-area feedback-info';
+        }
+
+        function resetGame() {
+            correct = 0;
+            wrong = 0;
+            totalAttempts = 0;
+            currentShapeIndex = -1;
+            updateScore();
+            document.querySelectorAll('.shape-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('feedback').className = 'feedback-area';
+            document.getElementById('feedback').innerHTML = `
+                <h3>Your Prediction:</h3>
+                <p class="feedback-text">Select a shape and click "Show Pattern" to see how it looks, then make your guess!</p>
+            `;
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Initialize
+        initShapeButtons();
+    </script>
+</body>
+</html>
