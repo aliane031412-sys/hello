@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishery Quest - RPG Adventure Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #0f3460;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #0f3460;
+            border: 3px solid #e94560;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+
+        .header {
+            background: linear-gradient(90deg, #e94560 0%, #f39c12 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            padding: 20px;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            background: #16213e;
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e94560;
+            padding-bottom: 15px;
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-title {
+            color: #f39c12;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .stat {
+            color: #00d4ff;
+            margin: 8px 0;
+            font-size: 0.85em;
+        }
+
+        .stat-bar {
+            background: #0a1428;
+            border: 1px solid #e94560;
+            height: 15px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff 0%, #f39c12 100%);
+            transition: width 0.3s ease;
+        }
+
+        .game-area {
+            background: #16213e;
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .scene {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-size: 0.95em;
+        }
+
+        .scene-title {
+            color: #f39c12;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .dialog {
+            background: #0a1428;
+            border-left: 3px solid #00d4ff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-style: italic;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
+            color: white;
+            border: 2px solid #e94560;
+            padding: 12px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #f39c12 0%, #e94560 100%);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.7);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-panel {
+            background: #16213e;
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .info-title {
+            color: #f39c12;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .inventory-item {
+            background: #0a1428;
+            border: 1px solid #00d4ff;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            color: #00d4ff;
+            font-size: 0.85em;
+        }
+
+        .achievement {
+            background: #0a1428;
+            border-left: 3px solid #f39c12;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            color: #f39c12;
+            font-size: 0.85em;
+        }
+
+        .enemy {
+            background: linear-gradient(135deg, #e94560 20%, #8b0000 100%);
+            border: 2px solid #e94560;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            color: #ffd700;
+        }
+
+        .enemy-stats {
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .message.success {
+            background: #0a4d0a;
+            border-left: 3px solid #00d4ff;
+            color: #00d4ff;
+        }
+
+        .message.damage {
+            background: #4d0a0a;
+            border-left: 3px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .message.info {
+            background: #0a2d4d;
+            border-left: 3px solid #f39c12;
+            color: #f39c12;
+        }
+
+        .game-over {
+            background: linear-gradient(135deg, #e94560 0%, #8b0000 100%);
+            border: 3px solid #ffd700;
+            padding: 20px;
+            border-radius: 8px;
+            color: #ffd700;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .game-over h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar, .info-panel {
+                max-height: 300px;
+            }
+        }
+
+        .footer {
+            background: #1a1a2e;
+            color: #00d4ff;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 2px solid #e94560;
+            font-size: 0.85em;
+        }
+
+        .quest-log {
+            background: #0a1428;
+            border-left: 3px solid #f39c12;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            color: #f39c12;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>⚔️ FISHERY QUEST ⚔️</h1>
+            <p>An Epic RPG Adventure - Save the Fisheries from Destruction</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Left Sidebar - Character Stats -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">⚔️ HERO STATS</div>
+                    <div class="stat">
+                        <div>🧙 Name: <span id="heroName">Fisher</span></div>
+                    </div>
+                    <div class="stat">
+                        <div>Level: <span id="level">1</span></div>
+                    </div>
+                    <div class="stat">
+                        <div>EXP: <span id="exp">0</span>/100</div>
+                    </div>
+                    <div class="stat">Health Points:</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="hpBar" style="width: 100%"></div>
+                    </div>
+                    <div class="stat"><span id="hp">100</span>/100</div>
+
+                    <div class="stat">Mana:</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="manaBar" style="width: 100%; background: linear-gradient(90deg, #00d4ff 0%, #0099ff 100%);"></div>
+                    </div>
+                    <div class="stat"><span id="mana">50</span>/50</div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">💪 ABILITIES</div>
+                    <div class="stat">⚔️ Attack Power: <span id="attack">15</span></div>
+                    <div class="stat">🛡️ Defense: <span id="defense">10</span></div>
+                    <div class="stat">✨ Magic: <span id="magic">12</span></div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">🎖️ ACHIEVEMENTS</div>
+                    <div id="achievements"></div>
+                </div>
+            </div>
+
+            <!-- Center - Game Area -->
+            <div class="game-area">
+                <div id="gameContent"></div>
+            </div>
+
+            <!-- Right Panel - Inventory -->
+            <div class="info-panel">
+                <div class="info-title">🎒 INVENTORY</div>
+                <div id="inventory"></div>
+
+                <div style="margin-top: 20px;">
+                    <div class="info-title">📜 QUEST LOG</div>
+                    <div id="questLog"></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div class="info-title">💰 RESOURCES</div>
+                    <div class="stat">Gold: <span id="gold">0</span></div>
+                    <div class="stat">Fish Souls: <span id="fishSouls">0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Use your skills wisely to restore balance to the fisheries and save the ecosystem!
+        </div>
+    </div>
+
+    <script>
+        const gameState = {
+            // Hero Stats
+            name: 'Fisher',
+            level: 1,
+            exp: 0,
+            maxExp: 100,
+            hp: 100,
+            maxHp: 100,
+            mana: 50,
+            maxMana: 50,
+            attack: 15,
+            defense: 10,
+            magic: 12,
+            gold: 0,
+            fishSouls: 0,
+
+            // Inventory
+            inventory: [],
+
+            // Quest System
+            currentQuest: null,
+            quests: [
+                { id: 1, name: 'Save the Fishery', description: 'Defeat the Pollution Monster', reward: 50, completed: false },
+                { id: 2, name: 'Restore Fish Habitat', description: 'Collect 5 Forest Crystals', reward: 75, completed: false },
+                { id: 3, name: 'Defeat the Overfishing Lord', description: 'Battle the final boss', reward: 200, completed: false }
+            ],
+
+            // Achievements
+            achievements: [],
+
+            // Game state
+            currentLocation: 'village',
+            inBattle: false,
+            currentEnemy: null,
+            messageLog: []
+        };
+
+        // Enemy definitions
+        const enemies = {
+            pollutionMonster: {
+                name: 'Pollution Monster',
+                hp: 30,
+                maxHp: 30,
+                attack: 8,
+                defense: 5,
+                reward: { exp: 50, gold: 25, items: ['Purification Stone'] }
+            },
+            overfishingDemon: {
+                name: 'Overfishing Demon',
+                hp: 50,
+                maxHp: 50,
+                attack: 12,
+                defense: 8,
+                reward: { exp: 100, gold: 50, items: ['Sustainability Orb'] }
+            },
+            overfishingLord: {
+                name: 'Overfishing Lord',
+                hp: 100,
+                maxHp: 100,
+                attack: 20,
+                defense: 15,
+                reward: { exp: 300, gold: 200, items: ['Crown of Conservation', 'Fish Soul'] }
+            }
+        };
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('heroName').textContent = gameState.name;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('exp').textContent = gameState.exp;
+            document.getElementById('hp').textContent = gameState.hp;
+            document.getElementById('mana').textContent = gameState.mana;
+            document.getElementById('hpBar').style.width = (gameState.hp / gameState.maxHp) * 100 + '%';
+            document.getElementById('manaBar').style.width = (gameState.mana / gameState.maxMana) * 100 + '%';
+            document.getElementById('attack').textContent = gameState.attack;
+            document.getElementById('defense').textContent = gameState.defense;
+            document.getElementById('magic').textContent = gameState.magic;
+            document.getElementById('gold').textContent = gameState.gold;
+            document.getElementById('fishSouls').textContent = gameState.fishSouls;
+
+            // Inventory
+            let invHTML = '';
+            gameState.inventory.forEach(item => {
+                invHTML += `<div class="inventory-item">• ${item}</div>`;
+            });
+            if (invHTML === '') invHTML = '<div class="stat">Empty</div>';
+            document.getElementById('inventory').innerHTML = invHTML;
+
+            // Achievements
+            let achHTML = '';
+            gameState.achievements.forEach(ach => {
+                achHTML += `<div class="achievement">★ ${ach}</div>`;
+            });
+            if (achHTML === '') achHTML = '<div class="stat">None yet</div>';
+            document.getElementById('achievements').innerHTML = achHTML;
+
+            // Quest Log
+            let questHTML = '';
+            gameState.quests.forEach(q => {
+                if (!q.completed) {
+                    questHTML += `<div class="quest-log">⚔️ ${q.name}<br/>${q.description}</div>`;
+                }
+            });
+            document.getElementById('questLog').innerHTML = questHTML;
+        }
+
+        // Add message
+        function addMessage(text, type = 'info') {
+            const gameContent = document.getElementById('gameContent');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.textContent = text;
+            gameContent.appendChild(msg);
+            gameContent.scrollTop = gameContent.scrollHeight;
+        }
+
+        // Display scene
+        function displayScene(title, description, actions) {
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = `
+                <div class="scene">
+                    <div class="scene-title">${title}</div>
+                    <div>${description}</div>
+                </div>
+            `;
+
+            if (actions && actions.length > 0) {
+                const actionDiv = document.createElement('div');
+                actionDiv.className = 'action-buttons';
+                actions.forEach(action => {
+                    const btn = document.createElement('button');
+                    btn.className = 'action-btn';
+                    btn.textContent = action.text;
+                    btn.onclick = action.onclick;
+                    actionDiv.appendChild(btn);
+                });
+                gameContent.appendChild(actionDiv);
+            }
+        }
+
+        // Village Scene
+        function visitVillage() {
+            displayScene(
+                '🏘️ THE VILLAGE',
+                'You stand in a peaceful fishing village. The air smells of salt and despair. The fishermen tell stories of depleting fish stocks and polluted waters. You must help them!',
+                [
+                    { text: '🌊 Go to the Polluted Harbor', onclick: () => explorePollutedHarbor() },
+                    { text: '🌲 Go to the Forest', onclick: () => exploreForest() },
+                    { text: '⚔️ Visit the Training Ground', onclick: () => trainingGround() },
+                    { text: '🏰 Visit the Boss Chamber', onclick: () => bossChamber() }
+                ]
+            );
+            gameState.currentLocation = 'village';
+        }
+
+        // Polluted Harbor
+        function explorePollutedHarbor() {
+            displayScene(
+                '🌊 POLLUTED HARBOR',
+                'The water is murky with pollution. Dead fish float on the surface. A Pollution Monster emerges from the toxic depths!',
+                [
+                    { text: '⚔️ Battle the Monster', onclick: () => startBattle('pollutionMonster') },
+                    { text: '💚 Try to Purify (Magic)', onclick: () => purifyWater() },
+                    { text: '🏃 Retreat to Village', onclick: () => visitVillage() }
+                ]
+            );
+        }
+
+        // Purify Water
+        function purifyWater() {
+            if (gameState.mana < 20) {
+                addMessage('Not enough mana to purify! (Need 20)', 'damage');
+                return;
+            }
+            gameState.mana -= 20;
+            gameState.exp += 30;
+            gameState.gold += 15;
+            addMessage('✨ You purify the water! The Pollution Monster weakens!', 'success');
+            addMessage('Gained 30 EXP and 15 Gold!', 'success');
+            if (!gameState.inventory.includes('Water Purification Recipe')) {
+                gameState.inventory.push('Water Purification Recipe');
+            }
+            checkLevelUp();
+            setTimeout(() => startBattle('pollutionMonster'), 500);
+            updateUI();
+        }
+
+        // Explore Forest
+        function exploreForest() {
+            displayScene(
+                '🌲 ENCHANTED FOREST',
+                'A mystical forest surrounds you. You see glowing crystals among the trees. These Forest Crystals can restore the fishery habitats!',
+                [
+                    { text: '✨ Collect Crystals', onclick: () => collectCrystals() },
+                    { text: '🐻 Encounter Wildlife Guardian', onclick: () => startBattle('overfishingDemon') },
+                    { text: '🏃 Return to Village', onclick: () => visitVillage() }
+                ]
+            );
+        }
+
+        // Collect Crystals
+        function collectCrystals() {
+            let collected = 0;
+            for (let i = 0; i < 3; i++) {
+                if (Math.random() > 0.3) {
+                    gameState.inventory.push('Forest Crystal');
+                    collected++;
+                }
+            }
+            gameState.exp += 40;
+            gameState.gold += 20;
+            addMessage(`🌟 You collected ${collected} Forest Crystals!`, 'success');
+            addMessage('Gained 40 EXP and 20 Gold!', 'success');
+            checkLevelUp();
+            updateUI();
+        }
+
+        // Training Ground
+        function trainingGround() {
+            displayScene(
+                '⚔️ TRAINING GROUND',
+                'You enter the training grounds. An old master offers to train you in the ways of conservation and combat.',
+                [
+                    { text: '💪 Increase Attack (10 Gold)', onclick: () => trainAbility('attack', 10) },
+                    { text: '🛡️ Increase Defense (10 Gold)', onclick: () => trainAbility('defense', 10) },
+                    { text: '✨ Increase Magic (15 Gold)', onclick: () => trainAbility('magic', 15) },
+                    { text: '🏃 Leave Training Ground', onclick: () => visitVillage() }
+                ]
+            );
+        }
+
+        // Train Ability
+        function trainAbility(ability, cost) {
+            if (gameState.gold < cost) {
+                addMessage('Not enough gold!', 'damage');
+                return;
+            }
+            gameState.gold -= cost;
+            gameState[ability] += 5;
+            addMessage(`✅ Your ${ability} increased to ${gameState[ability]}!`, 'success');
+            updateUI();
+        }
+
+        // Boss Chamber
+        function bossChamber() {
+            displayScene(
+                '👑 THE BOSS CHAMBER',
+                'You enter a dark, ominous chamber. The Overfishing Lord sits upon his throne of destruction. He has devastated countless fisheries!',
+                [
+                    { text: '⚔️ Challenge the Boss', onclick: () => startBattle('overfishingLord') },
+                    { text: '🏃 You\'re not ready yet...', onclick: () => visitVillage() }
+                ]
+            );
+        }
+
+        // Battle System
+        function startBattle(enemyKey) {
+            gameState.currentEnemy = { ...enemies[enemyKey] };
+            gameState.inBattle = true;
+
+            const gameContent = document.getElementById('gameContent');
+            gameContent.innerHTML = `
+                <div class="scene">
+                    <div class="scene-title">⚔️ BATTLE!</div>
+                    <div class="enemy">
+                        <div style="font-size: 1.1em; margin-bottom: 10px;">${gameState.currentEnemy.name}</div>
+                        <div class="enemy-stats">
+                            HP: <span id="enemyHp">${gameState.currentEnemy.hp}</span>/${gameState.currentEnemy.maxHp}
+                            <div class="stat-bar">
+                                <div class="stat-bar-fill" id="enemyHpBar" style="width: 100%; background: linear-gradient(90deg, #ff6b6b 0%, #ff0000 100%);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const actionDiv = document.createElement('div');
+            actionDiv.className = 'action-buttons';
+            const btns = [
+                { text: '⚔️ Physical Attack', onclick: () => playerAttack() },
+                { text: '✨ Magic Attack', onclick: () => playerMagic() },
+                { text: '💚 Heal (15 Mana)', onclick: () => playerHeal() },
+                { text: '🏃 Flee Battle', onclick: () => fleeBattle() }
+            ];
+            btns.forEach(action => {
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                btn.textContent = action.text;
+                btn.onclick = action.onclick;
+                actionDiv.appendChild(btn);
+            });
+            gameContent.appendChild(actionDiv);
+        }
+
+        // Player Attack
+        function playerAttack() {
+            const damage = Math.floor(gameState.attack + Math.random() * 10 - gameState.currentEnemy.defense);
+            gameState.currentEnemy.hp -= Math.max(1, damage);
+            addMessage(`⚔️ You attack for ${Math.max(1, damage)} damage!`, 'success');
+            updateEnemyHp();
+            setTimeout(() => {
+                if (gameState.currentEnemy.hp <= 0) {
+                    endBattle();
+                } else {
+                    enemyAttack();
+                }
+            }, 500);
+        }
+
+        // Player Magic
+        function playerMagic() {
+            if (gameState.mana < 15) {
+                addMessage('Not enough mana!', 'damage');
+                return;
+            }
+            gameState.mana -= 15;
+            const damage = Math.floor(gameState.magic * 1.5 + Math.random() * 15);
+            gameState.currentEnemy.hp -= damage;
+            addMessage(`✨ Magical blast for ${damage} damage!`, 'success');
+            updateEnemyHp();
+            updateUI();
+            setTimeout(() => {
+                if (gameState.currentEnemy.hp <= 0) {
+                    endBattle();
+                } else {
+                    enemyAttack();
+                }
+            }, 500);
+        }
+
+        // Player Heal
+        function playerHeal() {
+            if (gameState.mana < 15) {
+                addMessage('Not enough mana!', 'damage');
+                return;
+            }
+            gameState.mana -= 15;
+            const heal = Math.floor(gameState.magic * 0.8);
+            gameState.hp = Math.min(gameState.maxHp, gameState.hp + heal);
+            addMessage(`💚 You healed for ${heal} HP!`, 'success');
+            updateUI();
+            setTimeout(() => enemyAttack(), 500);
+        }
+
+        // Enemy Attack
+        function enemyAttack() {
+            const damage = Math.floor(gameState.currentEnemy.attack + Math.random() * 8 - gameState.defense);
+            gameState.hp -= Math.max(1, damage);
+            addMessage(`🐉 ${gameState.currentEnemy.name} attacks for ${Math.max(1, damage)} damage!`, 'damage');
+            updateUI();
+            if (gameState.hp <= 0) {
+                endBattle(true);
+            }
+        }
+
+        // Update Enemy HP Display
+        function updateEnemyHp() {
+            document.getElementById('enemyHp').textContent = gameState.currentEnemy.hp;
+            const hpPercent = Math.max(0, (gameState.currentEnemy.hp / gameState.currentEnemy.maxHp) * 100);
+            document.getElementById('enemyHpBar').style.width = hpPercent + '%';
+        }
+
+        // End Battle
+        function endBattle(playerLost = false) {
+            gameState.inBattle = false;
+            if (playerLost) {
+                displayScene(
+                    '💀 DEFEAT',
+                    'You have fallen in battle... But you are not defeated! You awaken back in the village, ready to try again.',
+                    [
+                        { text: '🏃 Return to Village', onclick: () => { gameState.hp = gameState.maxHp; visitVillage(); } }
+                    ]
+                );
+            } else {
+                const reward = gameState.currentEnemy.reward;
+                gameState.exp += reward.exp;
+                gameState.gold += reward.gold;
+                reward.items.forEach(item => gameState.inventory.push(item));
+
+                let msg = `🎉 Victory! You defeated the ${gameState.currentEnemy.name}!\n`;
+                msg += `Gained ${reward.exp} EXP and ${reward.gold} Gold!\n`;
+                msg += `Items: ${reward.items.join(', ')}`;
+                
+                addMessage(msg, 'success');
+
+                if (gameState.currentEnemy.name === 'Overfishing Lord') {
+                    gameState.fishSouls++;
+                    if (!gameState.achievements.includes('Defeated the Overfishing Lord')) {
+                        gameState.achievements.push('Defeated the Overfishing Lord');
+                    }
+                    displayScene(
+                        '👑 VICTORY!',
+                        'You have defeated the Overfishing Lord and restored balance to the fisheries! The ecosystem begins to heal. Your legend will be remembered as the savior of the fisheries!',
+                        [
+                            { text: '🎊 Play Again', onclick: () => location.reload() }
+                        ]
+                    );
+                } else {
+                    displayScene(
+                        '🎉 VICTORY',
+                        msg,
+                        [
+                            { text: '🏃 Return to Village', onclick: () => visitVillage() }
+                        ]
+                    );
+                }
+
+                checkLevelUp();
+                updateUI();
+            }
+        }
+
+        // Flee Battle
+        function fleeBattle() {
+            if (Math.random() > 0.4) {
+                addMessage('🏃 You managed to escape!', 'info');
+                gameState.inBattle = false;
+                setTimeout(() => visitVillage(), 500);
+            } else {
+                addMessage('Failed to escape!', 'damage');
+                setTimeout(() => enemyAttack(), 500);
+            }
+        }
+
+        // Check Level Up
+        function checkLevelUp() {
+            while (gameState.exp >= gameState.maxExp) {
+                gameState.exp -= gameState.maxExp;
+                gameState.level++;
+                gameState.maxHp += 20;
+                gameState.maxMana += 10;
+                gameState.hp = gameState.maxHp;
+                gameState.mana = gameState.maxMana;
+                gameState.attack += 3;
+                gameState.defense += 2;
+                gameState.magic += 3;
+                addMessage(`⭐ LEVEL UP! You are now level ${gameState.level}!`, 'success');
+                if (!gameState.achievements.includes(`Reached Level ${gameState.level}`)) {
+                    gameState.achievements.push(`Reached Level ${gameState.level}`);
+                }
+            }
+        }
+
+        // Start Game
+        updateUI();
+        visitVillage();
+    </script>
+</body>
+</html>
