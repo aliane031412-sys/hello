@@ -96,12 +96,19 @@
             font-size: 1.3em;
         }
 
-        /* Body Shape Slide */
-        .fish-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+        /* Fish Image Styles */
+        .fish-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin: 30px 0;
+        }
+
+        .fish-image {
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .fish-card {
@@ -131,15 +138,11 @@
             color: #555;
         }
 
-        .fish-shape {
-            width: 100%;
-            height: 80px;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 3em;
+        .fish-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 30px 0;
         }
 
         /* Caudal Fin Slide */
@@ -170,14 +173,12 @@
             font-size: 1.2em;
         }
 
-        .fin-shape {
+        .fin-image {
             width: 100%;
-            height: 70px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3em;
+            max-width: 200px;
+            height: auto;
+            margin: 10px auto;
+            display: block;
         }
 
         .fin-card p {
@@ -268,6 +269,21 @@
         .comparison-table tr:nth-child(even) {
             background: #f8f9fa;
         }
+
+        .fish-showcase {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .fish-showcase img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -311,19 +327,17 @@
         <div class="slide">
             <h2>Body Shape: Fusiform</h2>
             <div class="content">
-                <div class="fish-grid">
-                    <div style="grid-column: 1 / -1;">
-                        <div class="fish-shape" style="background: radial-gradient(ellipse at 70% 50%, #333, #000); border-radius: 50% 50% 50% 50%; width: 200px; margin: 0 auto; height: 80px;"></div>
-                    </div>
-                </div>
                 <h3 style="text-align: center;">Example: Tuna</h3>
+                <div class="fish-showcase">
+                    <img src="https://images.unsplash.com/photo-1579854312267-2c8e26fbdc51?w=600&h=400&fit=crop" alt="Tuna fish" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
+                </div>
                 <div class="highlight">
                     <strong>Characteristics:</strong>
-                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Perfectly streamlined body<br>✓ Circular cross-section<br>✓ Minimal water resistance</p>
+                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Perfectly streamlined body<br>✓ Circular cross-section<br>✓ Minimal water resistance<br>✓ Powerful muscles for sustained speed</p>
                 </div>
                 <h3 style="text-align: center; margin-top: 30px;">Locomotion</h3>
                 <p><strong>Fast-swimming in open water</strong></p>
-                <p style="font-size: 0.95em;">The fusiform shape is ideal for long-distance, high-speed swimming in the open ocean.</p>
+                <p style="font-size: 0.95em;">The fusiform shape is ideal for long-distance, high-speed swimming in the open ocean. Tunas are among the fastest fish in the sea.</p>
             </div>
         </div>
 
@@ -331,19 +345,17 @@
         <div class="slide">
             <h2>Body Shape: Compressiform</h2>
             <div class="content">
-                <div class="fish-grid">
-                    <div style="grid-column: 1 / -1;">
-                        <div class="fish-shape" style="background: #333; width: 150px; height: 40px; margin: 30px auto; border-radius: 50% 50% 50% 50%;"></div>
-                    </div>
+                <h3 style="text-align: center;">Example: Tautog (Blackfish)</h3>
+                <div class="fish-showcase">
+                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop" alt="Tautog fish" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
                 </div>
-                <h3 style="text-align: center;">Example: Tautog</h3>
                 <div class="highlight">
                     <strong>Characteristics:</strong>
-                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Flattened from side to side<br>✓ Tall, narrow profile<br>✓ Increased fin surface area</p>
+                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Flattened from side to side<br>✓ Tall, narrow profile<br>✓ Increased fin surface area<br>✓ Excellent for quick turns</p>
                 </div>
                 <h3 style="text-align: center; margin-top: 30px;">Locomotion</h3>
                 <p><strong>Quick speed for short distances</strong></p>
-                <p style="font-size: 0.95em;">This shape is perfect for agile fish that dart quickly through rocky areas and reefs.</p>
+                <p style="font-size: 0.95em;">This shape is perfect for agile fish that dart quickly through rocky areas and reefs to hunt and escape predators.</p>
             </div>
         </div>
 
@@ -351,19 +363,17 @@
         <div class="slide">
             <h2>Body Shape: Depressiform</h2>
             <div class="content">
-                <div class="fish-grid">
-                    <div style="grid-column: 1 / -1;">
-                        <div class="fish-shape" style="background: #333; width: 220px; height: 50px; margin: 25px auto; border-radius: 50% 50% 50% 50%;"></div>
-                    </div>
+                <h3 style="text-align: center;">Example: Skate (Ray)</h3>
+                <div class="fish-showcase">
+                    <img src="https://images.unsplash.com/photo-1560618666-cd4628902249?w=600&h=400&fit=crop" alt="Skate ray" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
                 </div>
-                <h3 style="text-align: center;">Example: Skate</h3>
                 <div class="highlight">
                     <strong>Characteristics:</strong>
-                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Flattened from top to bottom<br>✓ Wide, flat body<br>✓ Hugs the seafloor</p>
+                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Flattened from top to bottom<br>✓ Wide, flat body<br>✓ Hugs the seafloor<br>✓ Uses fins for undulating movement</p>
                 </div>
                 <h3 style="text-align: center; margin-top: 30px;">Locomotion</h3>
                 <p><strong>Swims like a flying bird</strong></p>
-                <p style="font-size: 0.95em;">Bottom-dwelling fish that move by undulating their body and fins, similar to how a manta ray glides.</p>
+                <p style="font-size: 0.95em;">Bottom-dwelling fish that move by undulating their body and fins, similar to how a manta ray glides through water.</p>
             </div>
         </div>
 
@@ -371,19 +381,17 @@
         <div class="slide">
             <h2>Body Shape: Filiform</h2>
             <div class="content">
-                <div class="fish-grid">
-                    <div style="grid-column: 1 / -1;">
-                        <div class="fish-shape" style="background: #333; width: 280px; height: 20px; margin: 40px auto; border-radius: 50% 50% 50% 50%;"></div>
-                    </div>
-                </div>
                 <h3 style="text-align: center;">Example: Pipefish</h3>
+                <div class="fish-showcase">
+                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=300&fit=crop" alt="Pipefish" style="width: 100%; height: 250px; object-fit: cover; border-radius: 8px;">
+                </div>
                 <div class="highlight">
                     <strong>Characteristics:</strong>
-                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Long, thin, snake-like body<br>✓ Minimal volume<br>✓ Can slip through narrow spaces</p>
+                    <p style="text-align: left; margin: 10px 0 0 0;">✓ Long, thin, snake-like body<br>✓ Minimal volume<br>✓ Can slip through narrow spaces<br>✓ Camouflaged in seagrass</p>
                 </div>
                 <h3 style="text-align: center; margin-top: 30px;">Locomotion</h3>
                 <p><strong>Slithers through water like a snake</strong></p>
-                <p style="font-size: 0.95em;">Perfect for hiding in seagrass and coral, using an undulating motion through tight spaces.</p>
+                <p style="font-size: 0.95em;">Perfect for hiding in seagrass and coral, using an undulating motion to move quietly through tight spaces while hunting small prey.</p>
             </div>
         </div>
 
@@ -394,23 +402,23 @@
             <div class="fin-grid">
                 <div class="fin-card">
                     <h3>Rounded</h3>
-                    <div class="fin-shape">🪭</div>
+                    <img src="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=300&h=200&fit=crop" alt="Rounded fin" class="fin-image">
                     <p><strong>Function:</strong> Large surface area allows effective acceleration and maneuvering, but creates drag causing fish to tire easily.</p>
                 </div>
                 <div class="fin-card">
                     <h3>Truncate</h3>
-                    <div class="fin-shape">📦</div>
+                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&h=200&fit=crop" alt="Truncate fin" class="fin-image">
                     <p><strong>Function:</strong> Effective acceleration and maneuvering with less drag than rounded fins.</p>
                 </div>
                 <div class="fin-card">
                     <h3>Emarginate</h3>
-                    <div class="fin-shape">⚡</div>
-                    <p><strong>Function:</strong> Efficient acceleration and maneuvering with the least drag among conventional shapes.</p>
+                    <img src="https://images.unsplash.com/photo-1560618666-cd4628902249?w=300&h=200&fit=crop" alt="Emarginate fin" class="fin-image">
+                    <p><strong>Function:</strong> Efficient acceleration and maneuvering with less drag.</p>
                 </div>
                 <div class="fin-card">
                     <h3>Forked</h3>
-                    <div class="fin-shape">🔱</div>
-                    <p><strong>Function:</strong> Good acceleration and maneuvering with less surface area, meaning less drag overall.</p>
+                    <img src="https://images.unsplash.com/photo-1592040305146-4e4c05dfd70f?w=300&h=200&fit=crop" alt="Forked fin" class="fin-image">
+                    <p><strong>Function:</strong> Good acceleration and maneuvering with less surface area and reduced drag overall.</p>
                 </div>
             </div>
         </div>
@@ -421,8 +429,8 @@
             <div class="fin-grid" style="grid-template-columns: 1fr;">
                 <div class="fin-card">
                     <h3>Lunate</h3>
-                    <div class="fin-shape">🌙</div>
-                    <p><strong>Function:</strong> Rigid fin with less surface area means less drag and great acceleration, but decreased maneuvering ability. Perfect for open-water predators.</p>
+                    <img src="https://images.unsplash.com/photo-1579854312267-2c8e26fbdc51?w=400&h=200&fit=crop" alt="Lunate fin" class="fin-image">
+                    <p><strong>Function:</strong> Rigid fin with less surface area means less drag and great acceleration, but decreased maneuvering ability. Perfect for open-water predators like tuna and sharks.</p>
                 </div>
             </div>
             <div class="highlight" style="margin-top: 40px;">
