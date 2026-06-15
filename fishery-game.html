@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishery Tycoon - Interactive Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-list {
+            list-style: none;
+            margin: 10px 0;
+        }
+
+        .info-list li {
+            padding: 8px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #764ba2;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-message.danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .resource-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            margin: 8px 0;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .game-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .game-info strong {
+            color: #1565c0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎣 Fishery Tycoon</h1>
+            <p class="subtitle">Build and manage a sustainable fishery enterprise</p>
+        </header>
+
+        <div class="game-info">
+            <strong>Welcome to Fishery Tycoon!</strong> Fisheries are vital to economies worldwide, providing food, employment, and livelihoods. Your goal is to build a successful, sustainable fishery while balancing profit, environmental conservation, and community welfare.
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">💰 Total Budget</div>
+                <div class="stat-value" id="budget">$50,000</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">🐟 Fish Stock</div>
+                <div class="stat-value" id="fishStock">100%</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">👥 Employment</div>
+                <div class="stat-value" id="employment">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">📊 Sustainability</div>
+                <div class="stat-value" id="sustainability">100%</div>
+            </div>
+        </div>
+
+        <div id="messages"></div>
+
+        <div class="content">
+            <!-- Fishing Operations -->
+            <div class="section">
+                <h2>🎣 Fishing Operations</h2>
+                
+                <h3>Daily Catch</h3>
+                <button onclick="dailyCatch()">Fish Daily</button>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="catchProgress" style="width: 100%"></div>
+                </div>
+                <p>Income: <strong id="catchIncome">$0</strong></p>
+
+                <h3>Equipment</h3>
+                <div class="action-buttons">
+                    <button onclick="buyEquipment('boat')" id="buyBoat">Buy Boat ($5,000)</button>
+                    <button onclick="buyEquipment('nets')" id="buyNets">Buy Nets ($2,000)</button>
+                    <button onclick="buyEquipment('technology')" id="buyTech">Buy Tech ($8,000)</button>
+                </div>
+                <ul class="info-list" id="equipmentList">
+                    <li>🚤 Boats: 0</li>
+                    <li>🕸️ Nets: 0</li>
+                    <li>📱 Technology: 0</li>
+                </ul>
+            </div>
+
+            <!-- Workforce & Employment -->
+            <div class="section">
+                <h2>👥 Workforce Management</h2>
+                
+                <h3>Hire Employees</h3>
+                <button onclick="hireWorkers(1)">Hire 1 Worker ($1,000/year)</button>
+                <button onclick="hireWorkers(5)">Hire 5 Workers ($5,000/year)</button>
+
+                <h3>Employee Benefits</h3>
+                <button onclick="investBenefit('training')">Training Program ($3,000)</button>
+                <button onclick="investBenefit('safety')">Safety Equipment ($2,000)</button>
+                <button onclick="investBenefit('insurance')">Health Insurance ($4,000)</button>
+
+                <div class="resource-item">
+                    <span>Annual Payroll:</span>
+                    <strong id="payroll">$0</strong>
+                </div>
+                <div class="resource-item">
+                    <span>Worker Satisfaction:</span>
+                    <strong id="satisfaction">100%</strong>
+                </div>
+            </div>
+
+            <!-- Conservation & Sustainability -->
+            <div class="section">
+                <h2>🌍 Conservation & Sustainability</h2>
+                
+                <h3>Protection Programs</h3>
+                <button onclick="investConservation('breeding')">Fish Breeding Program ($4,000)</button>
+                <button onclick="investConservation('protected')">Protected Zone ($6,000)</button>
+                <button onclick="investConservation('monitoring')">Environmental Monitoring ($3,000)</button>
+
+                <div class="resource-item">
+                    <span>Breeding Programs:</span>
+                    <strong id="breeding">0</strong>
+                </div>
+                <div class="resource-item">
+                    <span>Protected Zones:</span>
+                    <strong id="protected">0</strong>
+                </div>
+
+                <h3>Impact</h3>
+                <p>Conservation maintains fish stocks and ensures long-term profitability and community welfare.</p>
+            </div>
+
+            <!-- Market & Trading -->
+            <div class="section">
+                <h2>🏪 Market & Trading</h2>
+                
+                <h3>Market Actions</h3>
+                <button onclick="expandMarket()">Expand Local Market ($3,000)</button>
+                <button onclick="expandMarket('national')">National Trading ($5,000)</button>
+                <button onclick="expandMarket('international')">International Export ($10,000)</button>
+
+                <h3>Market Reach</h3>
+                <ul class="info-list">
+                    <li id="marketLocal">📍 Local: Active</li>
+                    <li id="marketNational">🗺️ National: Inactive</li>
+                    <li id="marketIntl">🌐 International: Inactive</li>
+                </ul>
+
+                <h3>Fish Prices</h3>
+                <div class="resource-item">
+                    <span>Current Market Price:</span>
+                    <strong id="marketPrice">$80/unit</strong>
+                </div>
+            </div>
+
+            <!-- Year Overview & Reports -->
+            <div class="section full-width">
+                <h2>📈 Business Report</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <div>
+                        <strong>Year:</strong>
+                        <div id="year" style="font-size: 1.3em; color: #667eea;">Year 1</div>
+                    </div>
+                    <div>
+                        <strong>Total Revenue:</strong>
+                        <div id="totalRevenue" style="font-size: 1.3em; color: #667eea;">$0</div>
+                    </div>
+                    <div>
+                        <strong>Total Expenses:</strong>
+                        <div id="totalExpenses" style="font-size: 1.3em; color: #764ba2;">$0</div>
+                    </div>
+                    <div>
+                        <strong>Net Profit:</strong>
+                        <div id="netProfit" style="font-size: 1.3em; color: #22c55e;">$0</div>
+                    </div>
+                </div>
+                <button onclick="nextYear()" style="width: 100%; margin-top: 15px; padding: 15px;">Proceed to Next Year →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            budget: 50000,
+            initialBudget: 50000,
+            fishStock: 100,
+            maxFishStock: 100,
+            employment: 0,
+            sustainability: 100,
+            year: 1,
+            daysCaught: 0,
+            
+            // Equipment
+            boats: 0,
+            nets: 0,
+            technology: 0,
+            
+            // Workforce
+            workers: 0,
+            workerSatisfaction: 100,
+            payroll: 0,
+            
+            // Conservation
+            breedingPrograms: 0,
+            protectedZones: 0,
+            monitoring: 0,
+            
+            // Markets
+            localMarket: true,
+            nationalMarket: false,
+            intlMarket: false,
+            basePrice: 80,
+            
+            // Financial tracking
+            yearlyRevenue: 0,
+            yearlyExpenses: 0,
+            totalRevenue: 0,
+            totalExpenses: 0
+        };
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('budget').textContent = `$${gameState.budget.toLocaleString()}`;
+            document.getElementById('fishStock').textContent = `${gameState.fishStock}%`;
+            document.getElementById('employment').textContent = gameState.workers;
+            document.getElementById('sustainability').textContent = `${gameState.sustainability}%`;
+            
+            // Equipment
+            document.getElementById('equipmentList').innerHTML = `
+                <li>🚤 Boats: ${gameState.boats}</li>
+                <li>🕸️ Nets: ${gameState.nets}</li>
+                <li>📱 Technology: ${gameState.technology}</li>
+            `;
+            
+            // Workforce
+            document.getElementById('payroll').textContent = `$${gameState.payroll.toLocaleString()}/year`;
+            document.getElementById('satisfaction').textContent = `${gameState.workerSatisfaction}%`;
+            
+            // Conservation
+            document.getElementById('breeding').textContent = gameState.breedingPrograms;
+            document.getElementById('protected').textContent = gameState.protectedZones;
+            
+            // Markets
+            document.getElementById('marketLocal').textContent = gameState.localMarket ? '📍 Local: Active' : '📍 Local: Inactive';
+            document.getElementById('marketNational').textContent = gameState.nationalMarket ? '🗺️ National: Active' : '🗺️ National: Inactive';
+            document.getElementById('marketIntl').textContent = gameState.intlMarket ? '🌐 International: Active' : '🌐 International: Inactive';
+            
+            // Price calculation based on markets
+            let priceModifier = 1;
+            if (gameState.intlMarket) priceModifier = 1.5;
+            else if (gameState.nationalMarket) priceModifier = 1.25;
+            const currentPrice = Math.round(gameState.basePrice * priceModifier);
+            document.getElementById('marketPrice').textContent = `$${currentPrice}/unit`;
+            
+            // Reports
+            document.getElementById('year').textContent = `Year ${gameState.year}`;
+            document.getElementById('totalRevenue').textContent = `$${gameState.totalRevenue.toLocaleString()}`;
+            document.getElementById('totalExpenses').textContent = `$${gameState.totalExpenses.toLocaleString()}`;
+            const profit = gameState.totalRevenue - gameState.totalExpenses;
+            document.getElementById('netProfit').textContent = `$${profit.toLocaleString()}`;
+        }
+
+        // Show message
+        function showMessage(text, type = 'info') {
+            const messagesDiv = document.getElementById('messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = `status-message ${type}`;
+            messageEl.textContent = text;
+            messagesDiv.appendChild(messageEl);
+            
+            setTimeout(() => {
+                messageEl.style.opacity = '0';
+                setTimeout(() => messageEl.remove(), 300);
+            }, 3000);
+        }
+
+        // Daily Catch
+        function dailyCatch() {
+            if (gameState.fishStock <= 0) {
+                showMessage('⚠️ Fish stock depleted! Invest in conservation!', 'danger');
+                return;
+            }
+
+            const catchMultiplier = 1 + (gameState.boats * 0.5) + (gameState.nets * 0.3) + (gameState.technology * 0.4);
+            const workerBonus = gameState.workers * 0.05;
+            const totalMultiplier = catchMultiplier + workerBonus;
+            
+            const baseCatch = 50 * totalMultiplier;
+            let priceMultiplier = 1;
+            if (gameState.intlMarket) priceMultiplier = 1.5;
+            else if (gameState.nationalMarket) priceMultiplier = 1.25;
+            
+            const income = Math.round(baseCatch * gameState.basePrice * priceMultiplier);
+            gameState.budget += income;
+            gameState.yearlyRevenue += income;
+            gameState.totalRevenue += income;
+            gameState.daysCaught++;
+            
+            // Fish stock decreases
+            const depletion = Math.max(2, 5 - gameState.breedingPrograms - gameState.protectedZones);
+            gameState.fishStock = Math.max(0, gameState.fishStock - depletion);
+            
+            // Fish stock recovery from breeding
+            gameState.fishStock = Math.min(100, gameState.fishStock + gameState.breedingPrograms * 0.5);
+            gameState.sustainability = gameState.fishStock;
+            
+            document.getElementById('catchIncome').textContent = `$${income}`;
+            showMessage(`✅ Daily catch complete! Earned $${income}. Fish stock: ${gameState.fishStock}%`, 'success');
+            
+            updateDisplay();
+        }
+
+        // Buy Equipment
+        function buyEquipment(type) {
+            const costs = { boat: 5000, nets: 2000, technology: 8000 };
+            const cost = costs[type];
+            
+            if (gameState.budget < cost) {
+                showMessage('💰 Insufficient budget!', 'warning');
+                return;
+            }
+            
+            gameState.budget -= cost;
+            gameState.yearlyExpenses += cost;
+            gameState.totalExpenses += cost;
+            
+            if (type === 'boat') gameState.boats++;
+            else if (type === 'nets') gameState.nets++;
+            else if (type === 'technology') gameState.technology++;
+            
+            showMessage(`🛠️ ${type.charAt(0).toUpperCase() + type.slice(1)} purchased! Catch capacity increased.`, 'success');
+            updateDisplay();
+        }
+
+        // Hire Workers
+        function hireWorkers(count) {
+            const costPerWorker = 1000;
+            const totalCost = count * costPerWorker;
+            
+            if (gameState.budget < totalCost) {
+                showMessage('💰 Insufficient budget for hiring!', 'warning');
+                return;
+            }
+            
+            gameState.budget -= totalCost;
+            gameState.workers += count;
+            gameState.payroll += count * costPerWorker;
+            gameState.yearlyExpenses += totalCost;
+            gameState.totalExpenses += totalCost;
+            
+            showMessage(`👥 Hired ${count} worker(s)! Now have ${gameState.workers} employees.`, 'success');
+            updateDisplay();
+        }
+
+        // Invest in Benefits
+        function investBenefit(type) {
+            const costs = { training: 3000, safety: 2000, insurance: 4000 };
+            const cost = costs[type];
+            
+            if (gameState.budget < cost) {
+                showMessage('💰 Insufficient budget!', 'warning');
+                return;
+            }
+            
+            gameState.budget -= cost;
+            gameState.yearlyExpenses += cost;
+            gameState.totalExpenses += cost;
+            gameState.workerSatisfaction = Math.min(100, gameState.workerSatisfaction + 10);
+            
+            showMessage(`✅ ${type.charAt(0).toUpperCase() + type.slice(1)} program implemented! Worker satisfaction increased.`, 'success');
+            updateDisplay();
+        }
+
+        // Conservation investments
+        function investConservation(type) {
+            const costs = { breeding: 4000, protected: 6000, monitoring: 3000 };
+            const cost = costs[type];
+            
+            if (gameState.budget < cost) {
+                showMessage('💰 Insufficient budget!', 'warning');
+                return;
+            }
+            
+            gameState.budget -= cost;
+            gameState.yearlyExpenses += cost;
+            gameState.totalExpenses += cost;
+            
+            if (type === 'breeding') gameState.breedingPrograms++;
+            else if (type === 'protected') gameState.protectedZones++;
+            else if (type === 'monitoring') gameState.monitoring++;
+            
+            gameState.sustainability = Math.min(100, gameState.sustainability + 15);
+            
+            showMessage(`🌍 ${type} initiative established! Sustainability improved.`, 'success');
+            updateDisplay();
+        }
+
+        // Expand Markets
+        function expandMarket(market = 'local') {
+            const costs = { local: 3000, national: 5000, international: 10000 };
+            const cost = costs[market];
+            
+            if (gameState.budget < cost) {
+                showMessage('💰 Insufficient budget!', 'warning');
+                return;
+            }
+            
+            if (market === 'local' && gameState.localMarket) {
+                showMessage('✅ Local market already active!', 'info');
+                return;
+            }
+            if (market === 'national' && gameState.nationalMarket) {
+                showMessage('✅ National market already active!', 'info');
+                return;
+            }
+            if (market === 'international' && gameState.intlMarket) {
+                showMessage('✅ International market already active!', 'info');
+                return;
+            }
+            
+            gameState.budget -= cost;
+            gameState.yearlyExpenses += cost;
+            gameState.totalExpenses += cost;
+            
+            if (market === 'local') gameState.localMarket = true;
+            else if (market === 'national') gameState.nationalMarket = true;
+            else if (market === 'international') gameState.intlMarket = true;
+            
+            showMessage(`🏪 ${market.charAt(0).toUpperCase() + market.slice(1)} market expanded! Better prices available.`, 'success');
+            updateDisplay();
+        }
+
+        // Next Year
+        function nextYear() {
+            // Calculate sustainability impact
+            if (gameState.fishStock < 30) {
+                showMessage('⚠️ Warning: Fish stock critically low. Future catches will be affected!', 'danger');
+            }
+            
+            if (gameState.fishStock < 10) {
+                showMessage('🚨 Critical: Fishery collapse imminent! Invest in conservation immediately!', 'danger');
+            }
+            
+            // Worker turnover
+            const satisfactionLoss = 100 - gameState.workerSatisfaction;
+            const turnover = Math.floor(gameState.workers * (satisfactionLoss / 100) * 0.1);
+            gameState.workers = Math.max(0, gameState.workers - turnover);
+            
+            // Payroll deduction
+            gameState.yearlyExpenses += gameState.payroll;
+            gameState.totalExpenses += gameState.payroll;
+            gameState.budget -= gameState.payroll;
+            
+            // Financial impact
+            const yearlyProfit = gameState.yearlyRevenue - gameState.yearlyExpenses;
+            
+            if (gameState.budget < 0) {
+                showMessage('💥 Bankruptcy! Game Over. Your fishery failed due to financial mismanagement.', 'danger');
+                return;
+            }
+            
+            // Reset yearly counters
+            gameState.yearlyRevenue = 0;
+            gameState.yearlyExpenses = 0;
+            gameState.daysCaught = 0;
+            gameState.year++;
+            
+            // Natural fish stock recovery (if not overfished)
+            if (gameState.fishStock > 20) {
+                gameState.fishStock = Math.min(100, gameState.fishStock + 5);
+            }
+            gameState.sustainability = gameState.fishStock;
+            
+            showMessage(`🎉 Year ${gameState.year - 1} complete! Profit: $${yearlyProfit}. Moving to Year ${gameState.year}!`, 'success');
+            updateDisplay();
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
