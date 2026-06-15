@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishery Quest - Interactive Educational Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            background: #f0f0f0;
+            padding: 20px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            width: 150px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 400px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .scenario-box {
+            background: #f9f9f9;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .scenario-title {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .scenario-text {
+            color: #333;
+            font-size: 1.05em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .scenario-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+        }
+
+        .question-box {
+            background: #e8f1ff;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .answers {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .answer-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .answer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .feedback.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        .explanation {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .game-over-screen {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .game-over-screen h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .game-over-screen .final-stats {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .medal {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .progress-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .progress-bar {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>🎣 Fishery Quest 🌊</h1>
+            <p>Learn About Sustainable Fisheries Through Interactive Challenges</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-item">
+                <span class="progress-label">Progress:</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <span class="progress-label">Score:</span>
+                <span id="scoreDisplay" style="font-size: 1.2em; color: #667eea; font-weight: bold;">0/0</span>
+            </div>
+            <div class="progress-item">
+                <span class="progress-label">Fisheries Saved:</span>
+                <span id="savedDisplay" style="font-size: 1.2em; color: #28a745; font-weight: bold;">0</span>
+            </div>
+        </div>
+
+        <div class="content" id="gameContent"></div>
+    </div>
+
+    <script>
+        const gameData = {
+            currentScenario: 0,
+            score: 0,
+            totalQuestions: 0,
+            fisheries_saved: 0,
+            answers: [],
+            completed: false
+        };
+
+        const scenarios = [
+            {
+                title: "🌊 The Depleted Harbor",
+                emoji: "🌊",
+                description: "You arrive at a fishing harbor that once thrived with activity. The fishermen tell you that fish stocks have dramatically declined due to overfishing. What should the community do to restore the fishery?",
+                question: "What is the primary cause of fish stock depletion in this harbor?",
+                answers: [
+                    { text: "A) Too many fishing boats catching fish faster than they can reproduce", correct: true },
+                    { text: "B) Fish naturally migrate to other oceans", correct: false },
+                    { text: "C) Climate change makes fish disappear instantly", correct: false },
+                    { text: "D) Fishermen don't fish enough to sustain the economy", correct: false }
+                ],
+                explanation: "Overfishing occurs when fishing pressure exceeds the reproductive capacity of fish populations. This leads to declining stocks and threatens both food security and livelihoods.",
+                impact: "Understanding overfishing is crucial for implementing sustainable fishing practices."
+            },
+            {
+                title: "🌱 Conservation Program",
+                emoji: "🌱",
+                description: "A conservation organization proposes establishing protected marine zones where fishing is prohibited. This will allow fish populations to recover and reproduce.",
+                question: "Why are marine protected areas (MPAs) important for fishery sustainability?",
+                answers: [
+                    { text: "A) They allow fish stocks to recover and maintain biodiversity", correct: true },
+                    { text: "B) They increase fish prices in the market", correct: false },
+                    { text: "C) They eliminate the need for any fishing regulations", correct: false },
+                    { text: "D) They prevent all types of human activity in the ocean", correct: false }
+                ],
+                explanation: "MPAs act as natural fish reserves. By protecting breeding grounds and allowing populations to grow, they support sustainable fishing in surrounding areas and maintain ecosystem health.",
+                impact: "Protected areas create spillover effects that benefit nearby fishing communities."
+            },
+            {
+                title: "💼 Economic Balance",
+                emoji: "💼",
+                description: "The government must decide between short-term fishing profits and long-term sustainability. They propose limiting catch volumes and investing in alternative livelihoods.",
+                question: "How does sustainable fishing benefit the economy long-term?",
+                answers: [
+                    { text: "A) By maintaining fish stocks, it ensures consistent food supply and employment", correct: true },
+                    { text: "B) By eliminating all fishing activity", correct: false },
+                    { text: "C) By allowing unlimited fishing for maximum profit", correct: false },
+                    { text: "D) By transferring all fishing to industrial nations", correct: false }
+                ],
+                explanation: "Sustainable fisheries provide stable livelihoods and food security for millions. Without sustainability, fisheries collapse, causing economic devastation and food insecurity.",
+                impact: "Fisheries provide livelihoods to over 10% of the world's population."
+            },
+            {
+                title: "🐟 Breeding Programs",
+                emoji: "🐟",
+                description: "Scientists propose artificial fish breeding and restocking programs to accelerate population recovery while reducing fishing pressure.",
+                question: "What is a key advantage of fish breeding and restocking programs?",
+                answers: [
+                    { text: "A) They can accelerate population recovery during conservation periods", correct: true },
+                    { text: "B) They eliminate the need for any fishing restrictions", correct: false },
+                    { text: "C) They make fishing completely free for everyone", correct: false },
+                    { text: "D) They replace natural ecosystems entirely", correct: false }
+                ],
+                explanation: "Fish hatcheries can produce juvenile fish for restocking depleted waters. Combined with protected areas and reduced fishing pressure, they help populations rebound faster.",
+                impact: "Breeding programs have successfully restored several commercial fish species."
+            },
+            {
+                title: "♻️ Environmental Care",
+                emoji: "♻️",
+                description: "Pollution from coastal industries has contaminated fishing grounds. The community must invest in pollution control and water treatment.",
+                question: "How does water pollution affect fishery sustainability?",
+                answers: [
+                    { text: "A) Pollution destroys fish habitats and reduces reproductive success", correct: true },
+                    { text: "B) Pollution actually increases fish populations", correct: false },
+                    { text: "C) Pollution has no effect on fish", correct: false },
+                    { text: "D) Only oil pollution matters, not other chemicals", correct: false }
+                ],
+                explanation: "Polluted water degrades fish habitats, reduces oxygen levels, causes disease, and prevents normal reproduction. Protecting water quality is essential for healthy fisheries.",
+                impact: "Clean water is fundamental to thriving fish populations and human health."
+            },
+            {
+                title: "👥 Community Engagement",
+                emoji: "👥",
+                description: "Local fishermen are trained in sustainable fishing techniques like size limits, seasonal closures, and selective gear. They become stewards of their own fishery.",
+                question: "Why is local community involvement essential for sustainable fisheries?",
+                answers: [
+                    { text: "A) Communities can monitor compliance and adapt practices based on local conditions", correct: true },
+                    { text: "B) It eliminates the need for government oversight", correct: false },
+                    { text: "C) It allows communities to fish however they want", correct: false },
+                    { text: "D) It's not important, only government matters", correct: false }
+                ],
+                explanation: "Local fishermen understand their environment best. When they're invested in sustainability and trained in best practices, they become powerful advocates for their own fishery's health.",
+                impact: "Community-based fisheries management has shown high success rates globally."
+            },
+            {
+                title: "🌍 Trade & Markets",
+                emoji: "🌍",
+                description: "The community establishes a certification system proving their fish are sustainably caught. This opens international markets willing to pay premium prices.",
+                question: "What economic incentive does sustainable fishing certification provide?",
+                answers: [
+                    { text: "A) Consumers willing to pay higher prices for responsibly caught fish", correct: true },
+                    { text: "B) Eliminates the need to catch any fish", correct: false },
+                    { text: "C) Reduces the value of fish products", correct: false },
+                    { text: "D) Only works for wealthy countries", correct: false }
+                ],
+                explanation: "Sustainable seafood certification creates market differentiation. Environmentally conscious consumers demand certified products, creating profitable markets for sustainable fisheries.",
+                impact: "Certified sustainable seafood represents a growing global market worth billions."
+            },
+            {
+                title: "📊 Data & Monitoring",
+                emoji: "📊",
+                description: "The government deploys technology to monitor fish populations through tagging, acoustic sensors, and satellite tracking, enabling real-time management adjustments.",
+                question: "How does scientific monitoring improve fishery management?",
+                answers: [
+                    { text: "A) Real-time data allows managers to make informed decisions about catch limits", correct: true },
+                    { text: "B) Monitoring eliminates the need for any fishing restrictions", correct: false },
+                    { text: "C) It only works in developed countries", correct: false },
+                    { text: "D) Data shows fish numbers always increase", correct: false }
+                ],
+                explanation: "Scientific monitoring provides objective data on fish population health, recruitment, and sustainability. This information allows managers to adjust policies before problems become critical.",
+                impact: "Data-driven fishery management increases both economic and environmental outcomes."
+            },
+            {
+                title: "🎯 Integrated Approach",
+                emoji: "🎯",
+                description: "After years of implementing all these strategies together—marine protected areas, sustainable practices, community involvement, market development, and monitoring—the fishery has recovered!",
+                question: "Why does an integrated approach work best for sustainable fisheries?",
+                answers: [
+                    { text: "A) It addresses ecological, economic, and social aspects simultaneously", correct: true },
+                    { text: "B) A single policy can solve all problems instantly", correct: false },
+                    { text: "C) Fisheries don't need management", correct: false },
+                    { text: "D) Only developed nations can manage sustainably", correct: false }
+                ],
+                explanation: "Sustainable fisheries require balancing conservation, economics, and social needs. Successful programs combine protected areas, catch limits, technology, community engagement, and market incentives.",
+                impact: "Global examples show that integrated management can triple fish stocks while maintaining livelihoods."
+            }
+        ];
+
+        function renderScenario() {
+            const scenario = scenarios[gameData.currentScenario];
+            const totalQuestions = scenarios.length;
+            const progress = ((gameData.currentScenario) / totalQuestions) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').textContent = Math.floor(progress) + '%';
+
+            let html = `
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">📍 Challenge</div>
+                        <div class="stat-value">${gameData.currentScenario + 1}/${totalQuestions}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">✅ Score</div>
+                        <div class="stat-value">${gameData.score}/${gameData.currentScenario}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">🎯 Saved</div>
+                        <div class="stat-value">${gameData.fisheries_saved}</div>
+                    </div>
+                </div>
+
+                <div class="scenario-box">
+                    <div class="scenario-image">${scenario.emoji}</div>
+                    <div class="scenario-title">${scenario.title}</div>
+                    <div class="scenario-text">${scenario.description}</div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-text">❓ ${scenario.question}</div>
+                    <div class="answers" id="answersContainer">
+            `;
+
+            scenario.answers.forEach((answer, index) => {
+                html += `
+                    <button class="answer-btn" onclick="selectAnswer(${index})" id="answer-${index}">
+                        ${answer.text}
+                    </button>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+                <div id="feedbackContainer"></div>
+                <div id="actionButtonsContainer"></div>
+            `;
+
+            document.getElementById('gameContent').innerHTML = html;
+        }
+
+        function selectAnswer(index) {
+            const scenario = scenarios[gameData.currentScenario];
+            const isCorrect = scenario.answers[index].correct;
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const answersContainer = document.getElementById('answersContainer');
+
+            // Disable all buttons
+            document.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
+
+            // Show feedback
+            let feedbackHTML = `
+                <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                    ${isCorrect ? '✅ Correct! Great answer!' : '❌ Incorrect. Let\'s learn from this.'}
+                </div>
+                <div class="explanation">
+                    <strong>📚 Explanation:</strong> ${scenario.explanation}
+                    <br><br>
+                    <strong>💡 Impact:</strong> ${scenario.impact}
+                </div>
+            `;
+
+            if (isCorrect) {
+                gameData.score++;
+                gameData.fisheries_saved++;
+                feedbackHTML = `
+                    <div class="feedback correct">
+                        ✅ Correct! Great answer! 🎉
+                    </div>
+                    <div class="explanation">
+                        <strong>📚 Explanation:</strong> ${scenario.explanation}
+                        <br><br>
+                        <strong>💡 Impact:</strong> ${scenario.impact}
+                    </div>
+                `;
+            } else {
+                feedbackHTML = `
+                    <div class="feedback incorrect">
+                        ❌ Incorrect. Let's learn from this.
+                    </div>
+                    <div class="explanation">
+                        <strong>📚 Explanation:</strong> ${scenario.explanation}
+                        <br><br>
+                        <strong>💡 Impact:</strong> ${scenario.impact}
+                    </div>
+                `;
+            }
+
+            feedbackContainer.innerHTML = feedbackHTML;
+
+            // Highlight correct answer
+            document.querySelectorAll('.answer-btn').forEach((btn, i) => {
+                if (scenario.answers[i].correct) {
+                    btn.style.background = '#d4edda';
+                    btn.style.color = '#155724';
+                    btn.style.borderColor = '#28a745';
+                }
+                if (i === index && !isCorrect) {
+                    btn.style.background = '#f8d7da';
+                    btn.style.color = '#721c24';
+                    btn.style.borderColor = '#f5c6cb';
+                }
+            });
+
+            // Show next button
+            let actionHTML = '<div class="action-buttons">';
+            if (gameData.currentScenario < scenarios.length - 1) {
+                actionHTML += '<button class="btn" onclick="nextScenario()">Next Challenge →</button>';
+            } else {
+                actionHTML += '<button class="btn" onclick="finishGame()">View Results 🏆</button>';
+            }
+            actionHTML += '</div>';
+
+            document.getElementById('actionButtonsContainer').innerHTML = actionHTML;
+            updateScore();
+        }
+
+        function nextScenario() {
+            gameData.currentScenario++;
+            renderScenario();
+        }
+
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = `${gameData.score}/${gameData.currentScenario + 1}`;
+            document.getElementById('savedDisplay').textContent = gameData.fisheries_saved;
+        }
+
+        function finishGame() {
+            const percentage = Math.round((gameData.score / scenarios.length) * 100);
+            let medal = '🥉';
+            let title = 'Fishery Helper';
+            let message = 'You\'re learning about sustainable fisheries!';
+
+            if (percentage >= 80) {
+                medal = '🥇';
+                title = 'Master Conservationist';
+                message = 'Excellent! You have mastered sustainable fishery practices!';
+            } else if (percentage >= 60) {
+                medal = '🥈';
+                title = 'Fishery Guardian';
+                message = 'Great work! You understand the key principles of sustainable fisheries!';
+            }
+
+            let finalHTML = `
+                <div class="game-over-screen">
+                    <div class="medal">${medal}</div>
+                    <h2>Game Complete!</h2>
+                    <div class="final-stats">
+                        <h3>${title}</h3>
+                        <p>${message}</p>
+                        <br>
+                        <p><strong>Final Score: ${gameData.score}/${scenarios.length}</strong></p>
+                        <p><strong>Accuracy: ${percentage}%</strong></p>
+                        <p><strong>Fisheries Saved: ${gameData.fisheries_saved}</strong></p>
+                    </div>
+                    
+                    <div style="text-align: left; background: #f0f0f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="color: #667eea; margin-bottom: 15px;">📚 Key Learnings:</h3>
+                        <ul style="line-height: 1.8; color: #333;">
+                            <li>🎣 Overfishing depletes fish stocks faster than they can reproduce</li>
+                            <li>🌱 Marine Protected Areas allow populations to recover and maintain biodiversity</li>
+                            <li>💼 Sustainable fishing ensures long-term economic stability and food security</li>
+                            <li>🐟 Breeding programs accelerate population recovery</li>
+                            <li>♻️ Clean water is essential for healthy fish populations</li>
+                            <li>👥 Community involvement is crucial for successful management</li>
+                            <li>🌍 Sustainable certification opens premium markets</li>
+                            <li>📊 Data-driven monitoring enables informed management decisions</li>
+                            <li>🎯 Integrated approaches balancing ecology, economics, and society work best</li>
+                            <li>🌊 Without sustainable fisheries, economies face food security crises</li>
+                        </ul>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn" onclick="location.reload()">Play Again 🔄</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('gameContent').innerHTML = finalHTML;
+            updateScore();
+        }
+
+        // Start game
+        renderScenario();
+    </script>
+</body>
+</html>
