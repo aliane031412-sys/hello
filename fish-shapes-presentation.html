@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Body & Tail Shapes - Interactive Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            padding: 0;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .content {
+            padding: 40px 30px;
+            min-height: 500px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .shape-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .shape-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .shape-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .shape-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .shape-card.active .shape-name {
+            color: white;
+        }
+
+        .shape-visual {
+            font-size: 3em;
+            margin: 15px 0;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .shape-description {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .shape-card.active .shape-description {
+            color: #f0f0f0;
+        }
+
+        .shape-example {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #667eea;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .shape-card.active .shape-example {
+            color: #ffd700;
+            border-top-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .shape-function {
+            font-size: 0.9em;
+            color: #555;
+            padding-top: 8px;
+            font-style: italic;
+        }
+
+        .shape-card.active .shape-function {
+            color: #e0e0e0;
+        }
+
+        .memory-tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .memory-tip h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .memory-tip p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f7fa;
+        }
+
+        .comparison-table .shape-visual-table {
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .shape-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tab {
+                font-size: 0.9em;
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐠 Fish Body & Tail Shapes 🐟</h1>
+            <p>Explore how fish anatomy relates to their swimming behavior</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('body')">Body Shapes</button>
+            <button class="nav-tab" onclick="switchTab('tail')">Tail Shapes</button>
+            <button class="nav-tab" onclick="switchTab('comparison')">Comparison</button>
+        </div>
+
+        <div class="content">
+            <!-- Body Shapes Tab -->
+            <div id="body" class="tab-content active">
+                <h2 style="margin-bottom: 30px; color: #333;">Fish Body Shapes</h2>
+                <div class="shape-grid">
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Fusiform</div>
+                        <div class="shape-visual">🎯</div>
+                        <div class="shape-description">Streamlined, torpedo-shaped body</div>
+                        <div class="shape-example">Example: Tuna</div>
+                        <div class="shape-function">Function: Fast swimming in open water</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Compressiform</div>
+                        <div class="shape-visual">◀▶</div>
+                        <div class="shape-description">Flattened from side to side</div>
+                        <div class="shape-example">Example: Tautog</div>
+                        <div class="shape-function">Function: Quick movement and turning for short distances</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Depressiform</div>
+                        <div class="shape-visual">⬜</div>
+                        <div class="shape-description">Flattened from top to bottom</div>
+                        <div class="shape-example">Example: Skate</div>
+                        <div class="shape-function">Function: Glides or swims close to the bottom like a flying bird</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Filiform</div>
+                        <div class="shape-visual">〰️</div>
+                        <div class="shape-description">Long, slender, thread-like body</div>
+                        <div class="shape-example">Example: Pipefish</div>
+                        <div class="shape-function">Function: Slithers through water like a snake</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tail Shapes Tab -->
+            <div id="tail" class="tab-content">
+                <h2 style="margin-bottom: 30px; color: #333;">Fish Tail Shapes</h2>
+                <div class="shape-grid">
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Rounded</div>
+                        <div class="shape-visual">◯</div>
+                        <div class="shape-description">Rounded tail shape</div>
+                        <div class="shape-function">Strong acceleration & excellent maneuvering, but more drag and slower</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Truncate</div>
+                        <div class="shape-visual">▬</div>
+                        <div class="shape-description">Squared-off tail</div>
+                        <div class="shape-function">Good acceleration and maneuverability</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Emarginate</div>
+                        <div class="shape-visual">⌢</div>
+                        <div class="shape-description">Slightly indented tail</div>
+                        <div class="shape-function">Balances speed and maneuverability</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Forked</div>
+                        <div class="shape-visual">⚡</div>
+                        <div class="shape-description">Deeply divided tail</div>
+                        <div class="shape-function">Good speed with less drag</div>
+                    </div>
+
+                    <div class="shape-card" onclick="toggleCard(this)">
+                        <div class="shape-name">Lunate</div>
+                        <div class="shape-visual">🌙</div>
+                        <div class="shape-description">Crescent-shaped tail</div>
+                        <div class="shape-function">Very fast, long-distance swimming but less maneuverable</div>
+                    </div>
+                </div>
+
+                <div class="memory-tip">
+                    <h3>💡 Easy Way to Remember:</h3>
+                    <p><strong>ROUNDED → POWER</strong> (Acceleration & control, like a truck)</p>
+                    <p><strong>FORKED/LUNATE → SPEED</strong> (Fast & efficient, like a sports car)</p>
+                    <p><strong>TRUNCATE/EMARGINATE → BALANCED</strong> (All-purpose, like a sedan)</p>
+                </div>
+            </div>
+
+            <!-- Comparison Tab -->
+            <div id="comparison" class="tab-content">
+                <h2 style="margin-bottom: 30px; color: #333;">Shape vs. Function Comparison</h2>
+                
+                <h3 style="color: #667eea; margin-top: 30px; margin-bottom: 15px;">Body Shapes Summary</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Shape</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                            <th>Function</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="shape-visual-table">🎯</td>
+                            <td><strong>Fusiform</strong></td>
+                            <td>Tuna</td>
+                            <td>Fast open-water swimming</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">◀▶</td>
+                            <td><strong>Compressiform</strong></td>
+                            <td>Tautog</td>
+                            <td>Agile short-distance movement</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">⬜</td>
+                            <td><strong>Depressiform</strong></td>
+                            <td>Skate</td>
+                            <td>Bottom-dwelling gliding</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">〰️</td>
+                            <td><strong>Filiform</strong></td>
+                            <td>Pipefish</td>
+                            <td>Serpentine movement</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 style="color: #667eea; margin-top: 30px; margin-bottom: 15px;">Tail Shapes Summary</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Shape</th>
+                            <th>Characteristics</th>
+                            <th>Speed</th>
+                            <th>Maneuverability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="shape-visual-table">◯</td>
+                            <td><strong>Rounded</strong></td>
+                            <td>Low</td>
+                            <td>Excellent</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">▬</td>
+                            <td><strong>Truncate</strong></td>
+                            <td>Medium</td>
+                            <td>Good</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">⌢</td>
+                            <td><strong>Emarginate</strong></td>
+                            <td>Medium</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">⚡</td>
+                            <td><strong>Forked</strong></td>
+                            <td>High</td>
+                            <td>Fair</td>
+                        </tr>
+                        <tr>
+                            <td class="shape-visual-table">🌙</td>
+                            <td><strong>Lunate</strong></td>
+                            <td>Very High</td>
+                            <td>Poor</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🌊 Click on any card to highlight it • Use tabs to switch between views 🌊</p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function toggleCard(element) {
+            // Remove active class from all cards in current tab
+            const allCards = element.parentElement.querySelectorAll('.shape-card');
+            allCards.forEach(card => card.classList.remove('active'));
+
+            // Add active class to clicked card
+            element.classList.add('active');
+        }
+
+        // Initialize - set first card as active
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCard = document.querySelector('.shape-card');
+            if (firstCard) {
+                firstCard.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
